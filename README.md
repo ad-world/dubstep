@@ -1,11 +1,12 @@
-# Sourced 0.0.0
+# Dubstep 0.0.0
 
 ## About
-Sourced is a web application that allows recruiters to find leads on LinkedIn using AI. Currently under development.
+Dubstep is a web application that allows you to create playlists with ease. Currently under development.
 
 ## Stack
 - React
 - Flask
+- Cohere 
 
 ## Contributors
 - Aryaman Dhingra (@ad-world)
