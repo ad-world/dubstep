@@ -4,7 +4,6 @@ from app import app
 import base64
 import requests
 import logging
-import time
 from spotify_requests import spotify_get_request
 
 
