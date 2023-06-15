@@ -5,9 +5,12 @@ app = Flask(__name__)
 app.config.from_pyfile("config.py")
 app.secret_key = app.config["SECRET_KEY"]
 
-
+from spotify.playlists import get_playlists
 from functions import state_key, get_token, get_user_info
 import logging
+
+log = logging.getLogger("werkzeug")
+log.setLevel(logging.DEBUG)
 
 
 @app.route("/")
@@ -60,6 +63,13 @@ def callback():
 
             logging.info("new user: " + session["user_id"] + " " + session["name"])
     return redirect("/")
+
+
+@app.route("/playlists")
+def playlists():
+    playlists = get_playlists(session)
+
+    return playlists
 
 
 @app.route("/logout")
