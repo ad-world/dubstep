@@ -1,4 +1,4 @@
-from flask import Flask, session, make_response, redirect, request
+from flask import Flask, session, make_response, redirect, request, Response
 import urllib.parse
 
 app = Flask(__name__)
@@ -69,7 +69,10 @@ def callback():
 def playlists():
     playlists = get_playlists(session)
 
-    return playlists
+    if playlists is None:
+        return Response("No playlists found", 404)
+
+    return Response(playlists, 201, mimetype="application/json")
 
 
 @app.route("/logout")

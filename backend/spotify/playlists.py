@@ -6,4 +6,3 @@ def get_playlists(session):
     data = spotify_get_request(session, url)
 
     return data
-
