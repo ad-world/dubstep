@@ -1,8 +1,24 @@
 import { useState } from "react";
 import DubstepHeader from "../../partials/DubstepHeader";
-
+import { Spinner, useToast } from "@chakra-ui/react";
 const Prompt: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [prompt, setPrompt] = useState<string>("");
+  const toast = useToast();
+  const handleSubmit = () => {
+    if (prompt.trim() != "") {
+      setIsSubmitting(true);
+    } else {
+      toast({
+        variant: "solid",
+        title: "prompt cannot be empty.",
+        isClosable: true,
+        colorScheme: "whiteAlpha",
+        position: "top",
+      });
+      setPrompt("");
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-[url('/background.jpeg')] bg-cover">
@@ -13,12 +29,15 @@ const Prompt: React.FC = () => {
           className="w-full h-80 text-4xl my-4 rounded-2xl p-6 outline-0"
           placeholder="type prompt here..."
           disabled={isSubmitting}
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
         ></textarea>
         <button
-          className="text-4xl rounded-2xl p-6 bg-white w-80 shrink text-ace"
-          onClick={() => setIsSubmitting(true)}
+          className="text-4xl rounded-2xl p-6 bg-white w-80 shrink text-ace enabled:hover:bg-black enabled:hover:text-white enabled:transition enabled:duration-200 disabled:opacity-25"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
         >
-          {!isSubmitting ? "create playlist" : "loading..."}
+          {!isSubmitting ? "create playlist" : <Spinner size={"lg"} />}
         </button>
       </main>
     </div>

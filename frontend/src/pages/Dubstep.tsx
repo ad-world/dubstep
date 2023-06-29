@@ -24,7 +24,7 @@ const Dubstep: React.FC = () => {
         <h1 className="text-7xl">how would you like to generate a playlist?</h1>
         <GenerationChoice
           text="use an existing playlist"
-          url="/options/prompt"
+          url="/options/playlist"
         />
         <GenerationChoice
           text="write a meaningful prompt"

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import "aos/dist/aos.css";
@@ -6,12 +6,12 @@ import "./css/style.css";
 
 import AOS from "aos";
 
-import Home from "./pages/Home";
-import SignIn from "./pages/SignIn";
+import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import ResetPassword from "./pages/ResetPassword";
 import Dubstep from "./pages/Dubstep";
 import Prompt from "./pages/Options/Prompt";
+import Playlist from "./pages/Options/Playlist";
 
 function App() {
   const location = useLocation();
@@ -39,11 +39,12 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Dubstep />} />
-        <Route path="/options/prompt" element={<Prompt />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/dashboard" element={<Dubstep />} />
+          <Route path="/options/prompt" element={<Prompt />} />
+          <Route path="/options/playlist" element={<Playlist />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </>
   );
