@@ -2,7 +2,13 @@ import { Link, useLocation } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { useContext } from "react";
 import { UserContext } from "../contexts/userContext";
-const DubstepHeader: React.FC = () => {
+import { SpotifyUser } from "../types/spotify";
+
+interface DubstepHeaderProps {
+  user: SpotifyUser | null;
+}
+
+const DubstepHeader: React.FC<DubstepHeaderProps> = ({ user }) => {
   const location = useLocation();
   const isMainPage =
     location.pathname == "/dashboard" || location.pathname == "/";
@@ -17,7 +23,7 @@ const DubstepHeader: React.FC = () => {
           <Link to={target}>
             <h3>{!isMainPage && <ChevronLeftIcon />} dubstep</h3>
           </Link>
-          <h3>Username</h3>
+          {user && <h3>{user.display_name}</h3>}
         </div>
       </div>
     </header>

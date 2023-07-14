@@ -12,19 +12,26 @@ def get_refresh_token(refresh_token: str):
 
     creds = f"{client_id}:{client_secret}"
     authorization = base64.b64encode(creds.encode("utf-8")).decode("utf-8")
-    headers = {'Authorization': authorization, 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded'}
-    body = {'refresh_token': refresh_token, 'grant_type': 'refresh_token'}
+    headers = {
+        "Authorization": authorization,
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+    body = {"refresh_token": refresh_token, "grant_type": "refresh_token"}
 
     response = requests.post(token_url, headers=headers, data=body)
 
-    if(response.status_code == 200):
+    if response.status_code == 200:
         res = response.json()
-        return res['access_token'], res['expires_in']
+        return res["access_token"], res["expires_in"]
     else:
         logging.error("refresh_token: " + str(response.status_code))
 
+
 def check_refresh_token(session):
-    expires_in, refresh_token = session["token_expiration"], session["refresh_token"]
+    expires_in, refresh_token = session.get("token_expiration"), session.get(
+        "refresh_token"
+    )
     if time.time() > expires_in:
         gold = get_refresh_token(refresh_token)
 
@@ -39,9 +46,8 @@ def check_refresh_token(session):
         return False
 
 
-
 def spotify_get_request(session, url: str, params={}):
-    headers = {"Authorization": "Bearer {}".format(session["token"])}
+    headers = {"Authorization": "Bearer {}".format(session.get("token"))}
 
     response = requests.get(url, headers=headers, params=params)
 

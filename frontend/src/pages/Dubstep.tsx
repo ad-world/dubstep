@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
 import DubstepHeader from "../partials/DubstepHeader";
+import { useEffect, useState } from "react";
+import { getUserInfo } from "../API";
+import { SpotifyUser } from "../types/spotify";
 
 interface GenerationChoiceProps {
   text: string;
@@ -17,9 +20,19 @@ const GenerationChoice: React.FC<GenerationChoiceProps> = ({ text, url }) => {
 };
 
 const Dubstep: React.FC = () => {
+  const [user, setUser] = useState<SpotifyUser | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const spotify = await getUserInfo();
+      setUser(spotify);
+    };
+
+    getUser();
+  }, []);
   return (
     <div className="flex flex-col min-h-screen bg-[url('/background.jpeg')] bg-cover">
-      <DubstepHeader />
+      <DubstepHeader user={user} />
       <main className="flex-grow place-content-center grid grid-cols-1 w-4/5 mx-auto">
         <h1 className="text-7xl">how would you like to generate a playlist?</h1>
         <GenerationChoice

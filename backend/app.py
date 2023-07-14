@@ -1,9 +1,25 @@
 from flask import Flask, session, make_response, redirect, request, Response
 import urllib.parse
+from flask_cors import CORS
+from flask_session import Session
+from datetime import timedelta
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
+app.config["SESSION_PERMANENT"] = True
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=5)
+
+fe_url = "http://localhost:5173"
+
+
 app.secret_key = app.config["SECRET_KEY"]
+Session(app)
+CORS(app, origins=fe_url, supports_credentials=True)
+app.config["CORS_HEADERS"] = "Content-Type"
+
 
 from spotify.playlists import get_playlists
 from functions import state_key, get_token, get_user_info
@@ -13,7 +29,7 @@ log = logging.getLogger("werkzeug")
 log.setLevel(logging.DEBUG)
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "OPTIONS"])
 def home():
     if session.get("name"):
         return session.get("name")
@@ -51,7 +67,6 @@ def callback():
         session.pop("state_key", None)
 
         gold = get_token(code)
-
         if gold != None:
             session["token"] = gold[0]
             session["refresh_token"] = gold[1]
@@ -62,17 +77,36 @@ def callback():
             session["name"] = current_user["display_name"]
 
             logging.info("new user: " + session["user_id"] + " " + session["name"])
+
+            res = make_response(
+                redirect(fe_url + "/dashboard"),
+            )
+
+            return res
     return redirect("/")
 
 
-@app.route("/playlists")
+@app.route("/me", methods=["GET", "OPTIONS"])
+def me():
+    me = get_user_info(session)
+
+    return me
+
+
+@app.route("/playlists", methods=["GET", "OPTIONS"])
 def playlists():
     playlists = get_playlists(session)
 
     if playlists is None:
         return Response("No playlists found", 404)
 
-    return Response(playlists, 201, mimetype="application/json")
+    return playlists
+
+
+@app.route("/ping")
+def ping():
+    token = session.get("token", "")
+    return token
 
 
 @app.route("/logout")
