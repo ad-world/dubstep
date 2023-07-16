@@ -1,152 +1,66 @@
 import { useEffect, useState } from "react";
 import DubstepHeader from "../../partials/DubstepHeader";
-import { cookieStorageManager } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import { SpotifyPlaylist } from "../../types/spotify";
+import { getPlaylists } from "../../API";
+import { StatusResponse } from "../../types/api";
+
+const defaultImage =
+  "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png";
 
 interface PlaylistBoxProps {
-  name: string;
-  image: string;
+  playlist: SpotifyPlaylist;
 }
 
-const samplePlaylists = [
-  {
-    name: "p1",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p2",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p1",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p2",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p1",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p2",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p1",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p2",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p1",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p2",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p1",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p2",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p1",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p2",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p1",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p2",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p1",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-  {
-    name: "p2",
-    image:
-      "https://i.pinimg.com/originals/d7/c0/8b/d7c08ba221d859444203bf72e969a95a.png",
-  },
-];
-
-const PlaylistBox: React.FC<PlaylistBoxProps> = ({ name, image }) => {
+const PlaylistBox: React.FC<PlaylistBoxProps> = ({ playlist }) => {
   return (
-    <div className="w-full h-full bg-white flex-col rounded-xl p-6">
-      <img className="mb-4" src={image} width="200" height="200"></img>
-      <h3 className="font-bold">{name}</h3>
+    <div className="bg-white rounded-xl p-6 text-center drop-shadow-lg">
+      <img
+        className="mb-4 mx-auto"
+        src={playlist.images.length ? playlist.images[0].url : defaultImage}
+        width="200"
+        height="200"
+      ></img>
+      <h3 className="font-bold">{playlist.name}</h3>
+      <h4 className="">{playlist.owner.display_name}</h4>
     </div>
   );
 };
 
 const Playlist: React.FC = () => {
-  const [playlists, setPlaylists] = useState([]);
+  const [playlists, setPlaylists] = useState<Array<SpotifyPlaylist>>([]);
 
   useEffect(() => {
-    const getPlaylists = async () => {
-      const url = "http://127.0.0.1:5000";
-      const data = await fetch(url + "/playlists", {
-        credentials: "include",
-      });
-      const res = await data.json();
-
-      setPlaylists(res ?? []);
+    const populate = async () => {
+      const data = await getPlaylists();
+      if (data.status == StatusResponse.Success) {
+        setPlaylists(data.data.items);
+      }
     };
 
-    getPlaylists();
+    populate();
   }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-[url('/background.jpeg')] bg-cover">
       <DubstepHeader user={null} />
-      <main className="flex my-10 place-content-center grid grid-cols-1 w-4/5 mx-auto ">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
-        >
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.25 }}
+      >
+        <main className="flex my-10 place-content-center grid grid-cols-1 w-4/5 mx-auto ">
           <h1 className="text-7xl mx-auto text-gray-800">
             pick a playlist to use as inspo
           </h1>
           <div className="flex-grow grid grid-cols-1 mx-auto gap-20 mt-10 lg:grid-cols-3 md:grid-cols-2">
-            {samplePlaylists.map((item) => {
-              return <PlaylistBox name={item.name} image={item.image} />;
+            {playlists.map((item) => {
+              return <PlaylistBox key={item.id} playlist={item} />;
             })}
           </div>
-        </motion.div>
-      </main>
+        </main>
+      </motion.div>
     </div>
   );
 };

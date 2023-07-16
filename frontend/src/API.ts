@@ -1,5 +1,6 @@
 import { API_URL } from "./constants";
-import { SpotifyUser } from "./types/spotify";
+import { DubstepResponse } from "./types/api";
+import { SpotifyPlaylistResponse, SpotifyUser } from "./types/spotify";
 
 export const getUserInfo = async (): Promise<SpotifyUser> => {
   const data = await fetch(`${API_URL}/me`, { credentials: "include" });
@@ -20,4 +21,14 @@ export const ping = async (): Promise<{ isLoggedIn: boolean }> => {
   const response = await data.json();
 
   return response;
+};
+
+export const getPlaylists = async (): Promise<
+  DubstepResponse<SpotifyPlaylistResponse>
+> => {
+  const data = await fetch(`${API_URL}/playlists`, {
+    credentials: "include",
+  });
+  const res = await data.json();
+  return res;
 };

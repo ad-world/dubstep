@@ -106,9 +106,7 @@ def me():
 def playlists():
     playlists = get_playlists(session)
 
-    return json.dumps(
-        {"success": "true" if playlists != None else "false", "playlists": playlists}
-    )
+    return playlists.jsonify()
 
 
 @app.route("/ping")
