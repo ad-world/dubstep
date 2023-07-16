@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DubstepHeader from "../partials/DubstepHeader";
 import { useEffect, useState } from "react";
-import { getUserInfo } from "../API";
+import { getUserInfo, ping } from "../API";
 import { SpotifyUser } from "../types/spotify";
 
 interface GenerationChoiceProps {
@@ -21,15 +21,22 @@ const GenerationChoice: React.FC<GenerationChoiceProps> = ({ text, url }) => {
 
 const Dubstep: React.FC = () => {
   const [user, setUser] = useState<SpotifyUser | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getUser = async () => {
+      const session = await ping();
+
+      if (!session.isLoggedIn) {
+        navigate("/");
+      }
+
       const spotify = await getUserInfo();
       setUser(spotify);
     };
 
     getUser();
-  }, []);
+  }, [navigate]);
   return (
     <div className="flex flex-col min-h-screen bg-[url('/background.jpeg')] bg-cover">
       <DubstepHeader user={user} />

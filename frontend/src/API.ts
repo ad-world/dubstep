@@ -7,3 +7,17 @@ export const getUserInfo = async (): Promise<SpotifyUser> => {
 
   return response;
 };
+
+export const logout = async (): Promise<boolean> => {
+  const data = await fetch(`${API_URL}/logout`, { credentials: "include" });
+  const response = await data.json();
+
+  return response;
+};
+
+export const ping = async (): Promise<{ isLoggedIn: boolean }> => {
+  const data = await fetch(`${API_URL}/ping`, { credentials: "include" });
+  const response = await data.json();
+
+  return response;
+};

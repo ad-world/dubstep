@@ -1,4 +1,13 @@
-from flask import Flask, session, make_response, redirect, request, Response
+from flask import (
+    Flask,
+    session,
+    make_response,
+    redirect,
+    request,
+    Response,
+    json,
+    jsonify,
+)
 import urllib.parse
 from flask_cors import CORS
 from flask_session import Session
@@ -90,26 +99,25 @@ def callback():
 def me():
     me = get_user_info(session)
 
-    return me
+    return jsonify(me)
 
 
 @app.route("/playlists", methods=["GET", "OPTIONS"])
 def playlists():
     playlists = get_playlists(session)
 
-    if playlists is None:
-        return Response("No playlists found", 404)
-
-    return playlists
+    return json.dumps(
+        {"success": "true" if playlists != None else "false", "playlists": playlists}
+    )
 
 
 @app.route("/ping")
 def ping():
     token = session.get("token", "")
-    return token
+    return json.dumps({"isLoggedIn": "true" if token != "" else "false"})
 
 
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/")
+    return "true"

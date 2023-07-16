@@ -29,9 +29,14 @@ def get_refresh_token(refresh_token: str):
 
 
 def check_refresh_token(session):
-    expires_in, refresh_token = session.get("token_expiration"), session.get(
-        "refresh_token"
+    expires_in, refresh_token = session.get("token_expiration", 0), session.get(
+        "refresh_token", ""
     )
+    if expires_in == 0 or refresh_token == "":
+        logging.error(
+            "expires_in is 0 and refresh_token is empty: session variables not saved"
+        )
+
     if time.time() > expires_in:
         gold = get_refresh_token(refresh_token)
 
