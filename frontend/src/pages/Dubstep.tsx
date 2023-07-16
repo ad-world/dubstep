@@ -3,6 +3,7 @@ import DubstepHeader from "../partials/DubstepHeader";
 import { useEffect, useState } from "react";
 import { getUserInfo, ping } from "../API";
 import { SpotifyUser } from "../types/spotify";
+import { motion } from "framer-motion";
 
 interface GenerationChoiceProps {
   text: string;
@@ -41,19 +42,28 @@ const Dubstep: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-[url('/background.jpeg')] bg-cover">
       <DubstepHeader user={user} />
       <main className="flex-grow place-content-center grid grid-cols-1 w-4/5 mx-auto">
-        <h1 className="text-7xl">how would you like to generate a playlist?</h1>
-        <GenerationChoice
-          text="use an existing playlist"
-          url="/options/playlist"
-        />
-        <GenerationChoice
-          text="write a meaningful prompt"
-          url="/options/prompt"
-        />
-        <GenerationChoice
-          text="pick a few moods and genres"
-          url="/options/prompt"
-        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          <h1 className="text-7xl">
+            how would you like to generate a playlist?
+          </h1>
+          <GenerationChoice
+            text="use an existing playlist"
+            url="/options/playlist"
+          />
+          <GenerationChoice
+            text="write a meaningful prompt"
+            url="/options/prompt"
+          />
+          <GenerationChoice
+            text="pick a few moods and genres"
+            url="/options/prompt"
+          />
+        </motion.div>
       </main>
     </div>
   );

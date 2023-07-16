@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import DubstepHeader from "../../partials/DubstepHeader";
 import { cookieStorageManager } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 
 interface PlaylistBoxProps {
   name: string;
@@ -120,7 +121,7 @@ const Playlist: React.FC = () => {
       });
       const res = await data.json();
 
-      console.log(res);
+      setPlaylists(res ?? []);
     };
 
     getPlaylists();
@@ -128,16 +129,23 @@ const Playlist: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-[url('/background.jpeg')] bg-cover">
-      <DubstepHeader />
+      <DubstepHeader user={null} />
       <main className="flex my-10 place-content-center grid grid-cols-1 w-4/5 mx-auto ">
-        <h1 className="text-7xl mx-auto text-gray-800">
-          pick a playlist to use as inspo
-        </h1>
-        <div className="flex-grow grid grid-cols-1 mx-auto gap-20 mt-10 lg:grid-cols-3 md:grid-cols-2">
-          {samplePlaylists.map((item) => {
-            return <PlaylistBox name={item.name} image={item.image} />;
-          })}
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          <h1 className="text-7xl mx-auto text-gray-800">
+            pick a playlist to use as inspo
+          </h1>
+          <div className="flex-grow grid grid-cols-1 mx-auto gap-20 mt-10 lg:grid-cols-3 md:grid-cols-2">
+            {samplePlaylists.map((item) => {
+              return <PlaylistBox name={item.name} image={item.image} />;
+            })}
+          </div>
+        </motion.div>
       </main>
     </div>
   );
