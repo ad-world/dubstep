@@ -32,3 +32,22 @@ export const getPlaylists = async (): Promise<
   const res = await data.json();
   return res;
 };
+
+export const getRecommendations = async (
+  playlist_id: string
+): Promise<DubstepResponse<any>> => {
+  const data = await fetch(`${API_URL}/recommendations`, {
+    credentials: "include",
+    method: "POST",
+    body: JSON.stringify({
+      playlist_id,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+
+  const res = await data.json();
+  return res;
+};

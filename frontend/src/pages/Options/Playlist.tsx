@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import DubstepHeader from "../../partials/DubstepHeader";
 import { motion } from "framer-motion";
 import { SpotifyPlaylist } from "../../types/spotify";
-import { getPlaylists } from "../../API";
+import { getPlaylists, getRecommendations } from "../../API";
 import { StatusResponse } from "../../types/api";
 
 const defaultImage =
@@ -13,17 +13,32 @@ interface PlaylistBoxProps {
 }
 
 const PlaylistBox: React.FC<PlaylistBoxProps> = ({ playlist }) => {
+  const clickHandler = async () => {
+    const data = await getRecommendations(playlist.id);
+    console.log(data);
+  };
+
   return (
-    <div className="bg-white rounded-xl p-6 text-center drop-shadow-lg">
-      <img
-        className="mb-4 mx-auto"
-        src={playlist.images.length ? playlist.images[0].url : defaultImage}
-        width="200"
-        height="200"
-      ></img>
-      <h3 className="font-bold">{playlist.name}</h3>
-      <h4 className="">{playlist.owner.display_name}</h4>
-    </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
+    >
+      <div
+        className="bg-white rounded-xl p-6 text-center drop-shadow-lg"
+        onClick={clickHandler}
+      >
+        <img
+          className="mb-4 mx-auto"
+          src={playlist.images.length ? playlist.images[0].url : defaultImage}
+          width="200"
+          height="200"
+        ></img>
+        <h3 className="font-bold">{playlist.name}</h3>
+        <h4 className="">{playlist.owner.display_name}</h4>
+      </div>
+    </motion.div>
   );
 };
 
@@ -55,6 +70,13 @@ const Playlist: React.FC = () => {
             pick a playlist to use as inspo
           </h1>
           <div className="flex-grow grid grid-cols-1 mx-auto gap-20 mt-10 lg:grid-cols-3 md:grid-cols-2">
+            {!playlists && (
+              <>
+                <div />
+                <div />
+                <div />
+              </>
+            )}
             {playlists.map((item) => {
               return <PlaylistBox key={item.id} playlist={item} />;
             })}

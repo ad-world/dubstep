@@ -9,9 +9,10 @@ from flask import (
     jsonify,
 )
 import urllib.parse
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_session import Session
 from datetime import timedelta
+from util.util import DubstepResponse, StatusResponse
 
 app = Flask(__name__)
 app.config.from_pyfile("config.py")
@@ -30,12 +31,20 @@ CORS(app, origins=fe_url, supports_credentials=True)
 app.config["CORS_HEADERS"] = "Content-Type"
 
 
-from spotify.playlists import get_playlists
+from spotify.playlists import get_playlists, get_playlist, get_artists_genres
 from functions import state_key, get_token, get_user_info
 import logging
 
 log = logging.getLogger("werkzeug")
 log.setLevel(logging.DEBUG)
+
+
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        res = Response()
+        res.headers["X-Content-Type-Options"] = "*"
+        return res
 
 
 @app.route("/", methods=["GET", "OPTIONS"])
@@ -113,6 +122,24 @@ def playlists():
 def ping():
     token = session.get("token", "")
     return json.dumps({"isLoggedIn": "true" if token != "" else "false"})
+
+
+@app.route("/recommendations", methods=["POST"])
+def recommendation():
+    if request.method == "POST":
+        request_data = request.get_json()
+        if request_data:
+            playlist_id: str = request_data["playlist_id"]
+            playlist = get_playlist(session, playlist_id)
+            artists_genres = get_artists_genres(playlist)
+
+            return artists_genres.jsonify()
+        else:
+            return DubstepResponse(
+                StatusResponse.Failure,
+                None,
+                "No playlist id was sent with POST request",
+            ).jsonify()
 
 
 @app.route("/logout")
