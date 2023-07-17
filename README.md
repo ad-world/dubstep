@@ -1,12 +1,13 @@
 # Dubstep 0.0.0
 
 ## About
-Dubstep is a web application that allows you to create playlists with ease. Currently under development.
+Dubstep is a web application that allows you to create playlists with ease (using AI). Currently under development.
 
 ## Stack
-- React
+- React w/ Typescript
 - Flask
-- Cohere 
+- Cohere
+- Spotify Web API 
 
 ## Contributors
 - Aryaman Dhingra (@ad-world)
