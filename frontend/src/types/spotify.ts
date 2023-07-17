@@ -49,3 +49,34 @@ export type SpotifyPlaylistResponse = {
   previous: number | null;
   total: number | null;
 };
+
+export type Seed = {
+  afterFilteringSize: number;
+  afterRelinkingSize: number;
+  href: string | null;
+  id: string | null;
+  initialPoolSize: number;
+  type: string;
+};
+
+export type SpotifyTrack = {
+  album: object;
+  artists: Array<{
+    name: string;
+    uri: string;
+    id: string;
+  }>;
+  duration_ms: number;
+  id: string;
+  href: string;
+  name: string;
+  popularity: number;
+  type: string;
+  uri: string;
+  preview_url: string;
+};
+
+export type SpotifyRecommendationResponse = {
+  seeds: Array<Seed>;
+  tracks: Array<SpotifyTrack>;
+};

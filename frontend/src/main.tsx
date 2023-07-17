@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import App from "./App";
@@ -14,13 +13,11 @@ const initialContext: UserContextProps = {
 const doc = document.getElementById("root");
 
 ReactDOM.createRoot(doc as HTMLElement).render(
-  <React.StrictMode>
-    <ChakraProvider>
-      <UserContext.Provider value={initialContext}>
-        <Router>
-          <App />
-        </Router>
-      </UserContext.Provider>
-    </ChakraProvider>
-  </React.StrictMode>
+  <ChakraProvider>
+    <UserContext.Provider value={initialContext}>
+      <Router>
+        <App />
+      </Router>
+    </UserContext.Provider>
+  </ChakraProvider>
 );
