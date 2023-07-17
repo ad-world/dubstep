@@ -1,3 +1,4 @@
+import operator
 from app import app
 from spotify_requests import spotify_get_request
 from util.util import DubstepResponse, StatusResponse
@@ -38,9 +39,8 @@ def get_playlist(session, playlist_id: str) -> DubstepResponse:
     return response
 
 
-def get_artists_genres(playlist: DubstepResponse) -> DubstepResponse:
+def get_artists(playlist: DubstepResponse) -> DubstepResponse:
     artists_map = {}
-    genres_map = {}
 
     response = DubstepResponse()
 
@@ -61,6 +61,54 @@ def get_artists_genres(playlist: DubstepResponse) -> DubstepResponse:
                 artists_map[artist["id"]] += 1
 
     response.status = StatusResponse.Success
-    response.message = "Created artist and genre map"
+    response.message = "Created artist map"
     response.data = artists_map
+    return response
+
+
+def get_most_popular_artists(playlist: DubstepResponse) -> DubstepResponse:
+    response = DubstepResponse()
+
+    if playlist.status == StatusResponse.Failure:
+        response.status = playlist.status
+        response.message = playlist.message
+        response.data = playlist.data
+        return response
+
+    popular_artists = dict(
+        sorted(playlist.data.items(), key=operator.itemgetter(1), reverse=True)[:5]
+    )
+
+    response.status, response.message, response.data = (
+        StatusResponse.Success,
+        "Found most popular artists",
+        popular_artists,
+    )
+
+    return response
+
+
+def get_spotify_recommendations(session, popular_artists: DubstepResponse) -> DubstepResponse:
+    url = "https://api.spotify.com/v1/recommendations"
+    artist_map = popular_artists.data
+    artists = ",".join(artist_map.keys())
+
+    params = {"limit": 50, "seed_artists": artists}
+
+    recommendations = spotify_get_request(session, url, params)
+
+    response = DubstepResponse()
+    if recommendations == None:
+        response.status, response.message = (
+            StatusResponse.Failure,
+            "Could not find recommendations",
+        )
+        return response
+
+    response.status, response.message, response.data = (
+        StatusResponse.Success,
+        "Retrieved recommendations",
+        recommendations,
+    )
+
     return response

@@ -31,7 +31,13 @@ CORS(app, origins=fe_url, supports_credentials=True)
 app.config["CORS_HEADERS"] = "Content-Type"
 
 
-from spotify.playlists import get_playlists, get_playlist, get_artists_genres
+from spotify.playlists import (
+    get_playlists,
+    get_playlist,
+    get_artists,
+    get_most_popular_artists,
+    get_spotify_recommendations,
+)
 from functions import state_key, get_token, get_user_info
 import logging
 
@@ -131,9 +137,11 @@ def recommendation():
         if request_data:
             playlist_id: str = request_data["playlist_id"]
             playlist = get_playlist(session, playlist_id)
-            artists_genres = get_artists_genres(playlist)
+            artists = get_artists(playlist)
+            popular_artists = get_most_popular_artists(artists)
+            recs = get_spotify_recommendations(session, popular_artists)
 
-            return artists_genres.jsonify()
+            return recs.jsonify()
         else:
             return DubstepResponse(
                 StatusResponse.Failure,
