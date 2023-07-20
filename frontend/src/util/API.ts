@@ -61,10 +61,10 @@ export const getRecommendations = async (
 
 export const createPlaylistFromPlaylist = async (
   createPlaylistRequest: CreatePlaylistFromPlaylistRequest
-): Promise<DubstepResponse<any>> => {
-  const data = await fetch(`${API_URL}/createPlaylistFromPlaylist`, {
+): Promise<DubstepResponse<null>> => {
+  const data = await fetch(`${API_URL}/createPlaylist`, {
     credentials: "include",
-    method: "pos",
+    method: "POST",
     body: JSON.stringify(createPlaylistRequest),
     headers: {
       "Content-Type": "application/json",

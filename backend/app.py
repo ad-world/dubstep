@@ -37,6 +37,7 @@ from spotify.playlists import (
     get_artists,
     get_most_popular_artists,
     get_spotify_recommendations,
+    create_playlist_with_tracks,
 )
 from functions import state_key, get_token, get_user_info
 import logging
@@ -147,6 +148,22 @@ def recommendation():
                 StatusResponse.Failure,
                 None,
                 "No playlist id was sent with POST request",
+            ).jsonify()
+
+
+@app.route("/createPlaylist", methods=["POST"])
+def createPlaylist():
+    if request.method == "POST":
+        request_data = request.get_json()
+        if request_data:
+            response = create_playlist_with_tracks(session, request_data)
+
+            return response.jsonify()
+        else:
+            return DubstepResponse(
+                StatusResponse.Failure,
+                None,
+                "No data was sent with the request.",
             ).jsonify()
 
 

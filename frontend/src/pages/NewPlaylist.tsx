@@ -1,8 +1,8 @@
-import {  motion } from "framer-motion";
+import { motion } from "framer-motion";
 import DubstepHeader from "../partials/DubstepHeader";
 import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { getRecommendations } from "../util/API";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { createPlaylistFromPlaylist, getRecommendations } from "../util/API";
 import { SpotifyRecommendationResponse, SpotifyTrack } from "../types/spotify";
 import {
   Box,
@@ -19,6 +19,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { formatDuration } from "../util/functions";
+import { StatusResponse } from "../types/api";
 
 interface TrackBoxProps {
   track: SpotifyTrack;
@@ -52,6 +53,7 @@ const NewPlaylist: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [params, _] = useSearchParams();
   const toast = useToast();
+  const navigate = useNavigate();
 
   const populate = useCallback(
     async (playlist_id: string) => {
@@ -78,9 +80,32 @@ const NewPlaylist: React.FC = () => {
     }
     setIsSubmitting(true);
 
-    // const res = await createPlaylistFromPlaylist({
-    //   tracks: songs?.tracks ?? [],
-    // });
+    const res = await createPlaylistFromPlaylist({
+      playlist_name: newName,
+      tracks: songs?.tracks ?? [],
+    });
+
+    setIsSubmitting(false);
+    onClose();
+
+    if (res.status == StatusResponse.Success) {
+      toast({
+        title: "playlist created successfully. check your spotify :)",
+        colorScheme: "green",
+        position: "top",
+        variant: "subtle",
+        isClosable: true,
+      });
+      navigate("/dashboard");
+    } else {
+      toast({
+        title: "could not create playlist for some reason. maybe try again?",
+        colorScheme: "red",
+        position: "top",
+        variant: "subtle",
+        isClosable: true,
+      });
+    }
   };
 
   useEffect(() => {
@@ -88,6 +113,7 @@ const NewPlaylist: React.FC = () => {
       populate(params.get("playlist") || "");
     }
   }, [params, populate]);
+  
   return (
     <div className="flex flex-col min-h-screen bg-[url('/background.jpeg')] bg-cover">
       <Modal isOpen={isOpen} onClose={onClose}>

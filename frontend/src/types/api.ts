@@ -13,6 +13,6 @@ export type DubstepResponse<T = null> = {
 };
 
 export type CreatePlaylistFromPlaylistRequest = {
-  name: string;
+  playlist_name: string;
   tracks: Array<SpotifyTrack>;
 };

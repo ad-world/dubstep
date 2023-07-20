@@ -68,3 +68,20 @@ def spotify_get_request(session, url: str, params={}):
     else:
         logging.error("spotify_get_request: " + str(response.status_code))
         return None
+
+
+def spotify_post_request(session, url: str, body):
+    headers = {"Authorization": "Bearer {}".format(session.get("token"))}
+
+    response = requests.post(url, headers=headers, data=body)
+
+    if response.status_code == 201 or response.status_code == 200:
+        return response.json()
+    elif response.status_code == 401:
+        if check_refresh_token(session):
+            spotify_post_request(session, url, body)
+        else:
+            return None
+    else:
+        logging.error("spotify_get_request: " + str(response.status_code))
+        return None
