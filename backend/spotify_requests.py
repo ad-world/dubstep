@@ -13,7 +13,7 @@ def get_refresh_token(refresh_token: str):
     creds = f"{client_id}:{client_secret}"
     authorization = base64.b64encode(creds.encode("utf-8")).decode("utf-8")
     headers = {
-        "Authorization": authorization,
+        "Authorization": f"Basic {authorization}",
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
     }
@@ -25,6 +25,7 @@ def get_refresh_token(refresh_token: str):
         res = response.json()
         return res["access_token"], res["expires_in"]
     else:
+        logging.error("refresh_token: " + str(response.content))
         logging.error("refresh_token: " + str(response.status_code))
 
 

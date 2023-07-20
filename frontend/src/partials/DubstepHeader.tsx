@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { SpotifyUser } from "../types/spotify";
 import { Button } from "@chakra-ui/react";
-import { logout } from "../API";
+import { logout } from "../util/API";
 import { useNavigate } from "react-router-dom";
 
 interface DubstepHeaderProps {

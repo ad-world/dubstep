@@ -1,10 +1,13 @@
 import { API_URL } from "./constants";
-import { DubstepResponse } from "./types/api";
+import {
+  CreatePlaylistFromPlaylistRequest,
+  DubstepResponse,
+} from "../types/api";
 import {
   SpotifyPlaylistResponse,
   SpotifyRecommendationResponse,
   SpotifyUser,
-} from "./types/spotify";
+} from "../types/spotify";
 
 export const getUserInfo = async (): Promise<SpotifyUser> => {
   const data = await fetch(`${API_URL}/me`, { credentials: "include" });
@@ -46,6 +49,23 @@ export const getRecommendations = async (
     body: JSON.stringify({
       playlist_id,
     }),
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+
+  const res = await data.json();
+  return res;
+};
+
+export const createPlaylistFromPlaylist = async (
+  createPlaylistRequest: CreatePlaylistFromPlaylistRequest
+): Promise<DubstepResponse<any>> => {
+  const data = await fetch(`${API_URL}/createPlaylistFromPlaylist`, {
+    credentials: "include",
+    method: "pos",
+    body: JSON.stringify(createPlaylistRequest),
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",

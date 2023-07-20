@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import DubstepHeader from "../partials/DubstepHeader";
 import { useEffect, useState } from "react";
-import { getUserInfo, ping } from "../API";
+import { getUserInfo, ping } from "../util/API";
 import { SpotifyUser } from "../types/spotify";
 import { motion } from "framer-motion";
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import DubstepHeader from "../../partials/DubstepHeader";
 import { motion } from "framer-motion";
 import { SpotifyPlaylist } from "../../types/spotify";
-import { getPlaylists } from "../../API";
+import { getPlaylists } from "../../util/API";
 import { StatusResponse } from "../../types/api";
 import { Link } from "react-router-dom";
 
@@ -39,12 +39,21 @@ const PlaylistBox: React.FC<PlaylistBoxProps> = ({ playlist }) => {
 
 const Playlist: React.FC = () => {
   const [playlists, setPlaylists] = useState<Array<SpotifyPlaylist>>([]);
+  const [noPlaylistsError, setNoPlaylistsError] = useState<boolean>(false);
 
   useEffect(() => {
     const populate = async () => {
       const data = await getPlaylists();
       if (data.status == StatusResponse.Success) {
-        setPlaylists(data.data.items);
+        if (data.data.items.length == 0) {
+          setNoPlaylistsError(true);
+        } else {
+          setPlaylists(data.data.items);
+        }
+      } else {
+        if (data.status == StatusResponse.Failure && data.data == null) {
+          setNoPlaylistsError(true);
+        }
       }
     };
 
@@ -76,6 +85,19 @@ const Playlist: React.FC = () => {
               return <PlaylistBox key={item.id} playlist={item} />;
             })}
           </div>
+          {noPlaylistsError && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              <h3 className="text-3xl mx-auto text-center">
+                it looks like you don't have any playlists - maybe go back to
+                the options and generate based on prompt or genres!
+              </h3>
+            </motion.div>
+          )}
         </main>
       </motion.div>
     </div>
